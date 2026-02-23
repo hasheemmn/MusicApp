@@ -1,0 +1,25 @@
+{
+  "songs": [
+    {
+      "id": 1,
+      "title": "Sample Song 1",
+      "author": "Demo Artist",
+      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      "coverImage": "https://picsum.photos/300/300?random=1"
+    },
+    {
+      "id": 2,
+      "title": "Sample Song 2",
+      "author": "Test Musician",
+      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      "coverImage": "https://picsum.photos/300/300?random=2"
+    },
+    {
+      "id": 3,
+      "title": "Sample Song 3",
+      "author": "Public Artist",
+      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      "coverImage": "https://picsum.photos/300/300?random=3"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Stylized Crystal Musical Note -->
+    <path
+        android:pathData="M54,20 L54,70 C54,78.28 47.28,85 39,85 C30.72,85 24,78.28 24,70 C24,61.72 30.72,55 39,55 C42.15,55 45.05,56.02 47.45,57.73 L47.45,35 L74,25 L74,55 C74,63.28 67.28,70 59,70 C50.72,70 44,63.28 44,55 C44,46.72 50.72,40 59,40 C62.15,40 65.05,41.02 67.45,42.73 L67.45,20 L54,20 Z"
+        android:fillType="nonZero">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="24"
+                android:startY="20"
+                android:endX="74"
+                android:endY="85"
+                android:type="linear">
+                <item android:offset="0" android:color="#00CEC9" /> <!-- Accent Cyan -->
+                <item android:offset="1" android:color="#6C5CE7" /> <!-- Primary Purple -->
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Crystal facet highlight -->
+    <path
+        android:pathData="M54,20 L74,20 L74,35 L54,35 Z"
+        android:fillAlpha="0.3"
+        android:fillColor="#FFFFFF" />
+
+</vector>
