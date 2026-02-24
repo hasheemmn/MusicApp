@@ -1,0 +1,96 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:padding="8dp"
+    android:background="@drawable/splash_background">
+
+
+    <!-- Album / App Logo -->
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_music_logo"
+        />
+
+    <!-- Song Title & Artist -->
+    <LinearLayout
+        android:id="@+id/title_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toEndOf="@id/iv_logo"
+        android:layout_toStartOf="@id/ll_buttons"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_medium" />
+
+        <TextView
+            android:id="@+id/tv_song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Now Playing"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_regular" />
+    </LinearLayout>
+
+    <!-- Playback Controls -->
+    <LinearLayout
+        android:id="@+id/ll_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/iv_prev"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_skip_back_icon"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Previous"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/iv_play_pause"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_white_play_icon"
+            android:layout_marginEnd="8dp"
+            app:tint="@color/black"
+            android:contentDescription="Play or Pause" />
+
+        <ImageView
+            android:id="@+id/iv_next_not"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+
+            android:src="@drawable/ic_skip_forward_icon"
+            android:contentDescription="Next"
+            app:tint="@color/black" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

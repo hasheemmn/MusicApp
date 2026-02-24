@@ -8,7 +8,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.oges.myapplication.R
 import com.oges.myapplication.databinding.FragmentHomeBinding
@@ -27,31 +26,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _binding = FragmentHomeBinding.bind(view)
-
-        setupSeekBar()
+        setupClicks()
         observeUi()
-        clickListeners()
-
-        viewModel.onStart()
+        setupSeekBar()
     }
 
     private fun observeUi() {
+
         viewLifecycleOwner.lifecycleScope.launch {
+
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
-                launch {
-                    viewModel.duration.collect { duration ->
-                        binding.seekBar.max = duration
-                        binding.totalTime.text = formatTime(duration)
-                    }
-                }
-
-                launch {
-                    viewModel.currentPosition.collect { position ->
-                        binding.seekBar.progress = position
-                        binding.currentTime.text = formatTime(position)
-                    }
-                }
 
                 launch {
                     combine(
@@ -60,15 +44,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     ) { songs, index ->
                         songs.getOrNull(index)
                     }.collect { song ->
-
                         song?.let {
                             binding.IdHomeNameTxt.text = it.title
                             binding.IdHomeDescriptionTxt.text = it.author
 
                             Glide.with(binding.root)
                                 .load(it.coverImage)
-                                .placeholder(R.color._444444)
-                                .error(R.color._444444)
                                 .into(binding.IdPodcastImageView)
                         }
                     }
@@ -84,59 +65,62 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         )
                     }
                 }
+
+                launch {
+                    viewModel.position.collect {
+                        binding.seekBar.progress = it.toInt()
+                        binding.currentTime.text = formatTime(it)
+                    }
+                }
+
+                launch {
+                    viewModel.duration.collect {
+                        binding.seekBar.max = it.toInt()
+                        binding.totalTime.text = formatTime(it)
+                    }
+                }
             }
+        }
+    }
+
+    private fun setupClicks() {
+        binding.IdPlayPauseBtn.setOnClickListener {
+            viewModel.onPlayPause()
+        }
+        binding.IdNextBtn.setOnClickListener {
+            viewModel.onNext()
+        }
+        binding.IdPreviousBtn.setOnClickListener {
+            viewModel.onPrevious()
         }
     }
 
     private fun setupSeekBar() {
         binding.seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
-
                 override fun onProgressChanged(
                     seekBar: SeekBar?,
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    if (fromUser) {
-                        viewModel.seekTo(progress)
-                    }
+                    if (fromUser)
+                        viewModel.seekTo(progress.toLong())
                 }
-
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
             }
         )
     }
 
-    private fun clickListeners() {
-        binding.IdPlayPauseBtn.setOnClickListener {
-            viewModel.onPlayPause()
-        }
-
-        binding.IdNextBtn.setOnClickListener {
-            viewModel.onNext()
-        }
-        binding.IdPreviousBtn.setOnClickListener{
-            viewModel.onPrevious()
-        }
-
-        binding.icEquilizer.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_homeFragment_to_equalizerFragment
-            )
-        }
-    }
-
-    private fun formatTime(ms: Int): String {
-        val seconds = ms / 1000
-        val minutes = seconds / 60
-        val remainingSeconds = seconds % 60
-        return String.format("%d:%02d", minutes, remainingSeconds)
+    private fun formatTime(ms: Long): String {
+        val sec = ms / 1000
+        val min = sec / 60
+        val remain = sec % 60
+        return String.format("%d:%02d", min, remain)
     }
 
     override fun onDestroyView() {
-        _binding = null
         super.onDestroyView()
+        _binding = null
     }
 }

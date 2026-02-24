@@ -69,6 +69,8 @@ dependencies {
     // Glide
     implementation(libs.glide)
     kapt(libs.glide.compiler)
+
+    implementation ("com.google.android.exoplayer:exoplayer:2.18.1")
 }
 
 kapt {
