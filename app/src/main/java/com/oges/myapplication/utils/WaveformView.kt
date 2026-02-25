@@ -3,9 +3,11 @@ package com.oges.myapplication.utils
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.graphics.toColorInt
+import kotlin.math.min
 
 class WaveformView @JvmOverloads constructor(
     context: Context,
@@ -13,54 +15,73 @@ class WaveformView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val paint = Paint().apply {
-        color = "#6200EE".toColorInt()
-        strokeWidth = 4f
+    private val playedPaint = Paint().apply {
+        color = "#00CEC9".toColorInt() // Played color
         isAntiAlias = true
     }
 
+    private val unplayedPaint = Paint().apply {
+        color = "#A29BFE".toColorInt() // Unplayed color
+        isAntiAlias = true
+    }
+
+    private var waveformData: List<Float> = emptyList()
+    private var progress: Float = 0f // 0f to 1f
+
+    private val barWidth = 12f
+    private val barSpacing = 8f
+    private val cornerRadius = 20f
+
     init {
-        // Disable Force Dark to prevent crashes on Xiaomi/POCO devices
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             isForceDarkAllowed = false
         }
     }
 
-    private var waveformData: List<Float> = emptyList()
-    private var progress: Float = 0f // 0.0 to 1.0
-
     fun updateWaveform(data: List<Float>) {
-        this.waveformData = data
+        waveformData = data
         invalidate()
     }
 
     fun updateProgress(progress: Float) {
-        this.progress = progress
+        this.progress = progress.coerceIn(0f, 1f)
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
         if (waveformData.isEmpty()) return
 
-        val w = width.toFloat()
-        val h = height.toFloat()
-        val centerY = h / 2
-        val barCount = waveformData.size
-        val barWidth = w / barCount
+        val viewHeight = height.toFloat()
+        val centerY = viewHeight / 2
+
+        val totalBars = waveformData.size
+        val totalWidth = totalBars * (barWidth + barSpacing)
+
+        val startX = (width - totalWidth) / 2f
 
         waveformData.forEachIndexed { index, value ->
-            val x = index * barWidth
-            val barHeight = value * h * 0.8f
-            
-            // Highlight progress
-            if (index.toFloat() / barCount <= progress) {
-                paint.color = "#00CEC9".toColorInt() // Accent Cyan
+
+            val normalized = min(1f, value)
+            val barHeight = normalized * viewHeight * 0.8f
+
+            val left = startX + index * (barWidth + barSpacing)
+            val right = left + barWidth
+            val top = centerY - barHeight / 2
+            val bottom = centerY + barHeight / 2
+
+            val rect = RectF(left, top, right, bottom)
+
+            val barProgress = index.toFloat() / totalBars
+
+            val paint = if (barProgress <= progress) {
+                playedPaint
             } else {
-                paint.color = "#A29BFE".toColorInt() // Primary Light Purple
+                unplayedPaint
             }
 
-            canvas.drawLine(x, centerY - barHeight / 2, x, centerY + barHeight / 2, paint)
+            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
         }
     }
 }

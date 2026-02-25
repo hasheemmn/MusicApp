@@ -29,6 +29,13 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_back_arrow"
+                    android:id="@+id/iv_back"
+                    android:layout_margin="5dp"/>
+
                 <TextView
                     android:id="@+id/tvEqualizerHeader"
                     android:layout_width="0dp"
