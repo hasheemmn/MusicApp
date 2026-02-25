@@ -146,7 +146,7 @@ class EqualizerFragment : Fragment() {
 
         binding.cvSave.setOnClickListener {
 
-            viewModel.saveToPref()
+            viewModel.applyChanges()
 
             Toast.makeText(
                 requireContext(),

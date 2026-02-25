@@ -161,40 +161,38 @@ class MusicService : Service() {
         try {
 
             val sessionId = player.audioSessionId
-
-            if (sessionId == 0) {
-                handler.postDelayed({ applyEqualizer() }, 300)
-                return
-            }
+            if (sessionId == 0) return
 
             if (!pref.isEqEnabled()) {
-                equalizer?.release()
-                bassBoost?.release()
-                equalizer = null
-                bassBoost = null
+                equalizer?.enabled = false
+                bassBoost?.enabled = false
                 return
             }
 
-            // Release previous effects
-            equalizer?.release()
-            bassBoost?.release()
-
-            equalizer = Equalizer(0, sessionId).apply {
-                enabled = true
+            // Create Equalizer only once
+            if (equalizer == null) {
+                equalizer = Equalizer(0, sessionId)
             }
+
+            if (bassBoost == null) {
+                bassBoost = BassBoost(0, sessionId)
+            }
+
+            equalizer?.enabled = true
+            bassBoost?.enabled = true
 
             val bandCount = equalizer?.numberOfBands ?: return
             val range = equalizer?.bandLevelRange ?: return
             val min = range[0]
             val max = range[1]
 
-            // Apply saved bands
+            // Just update levels (NO recreation)
             for (i in 0 until bandCount) {
 
                 val savedLevel = pref.getBandLevel(i)
 
-                val safeLevel = savedLevel
-                    .coerceIn(min.toInt(), max.toInt())
+                val safeLevel =
+                    savedLevel.coerceIn(min.toInt(), max.toInt())
 
                 equalizer?.setBandLevel(
                     i.toShort(),
@@ -202,28 +200,26 @@ class MusicService : Service() {
                 )
             }
 
-            // Apply Bass Boost
-            bassBoost = BassBoost(0, sessionId).apply {
-                enabled = true
-                val strength = pref.getBass()
-                    .coerceIn(0, 1000)
-                setStrength(strength.toShort())
-            }
+            // Update Bass
+            val strength = pref.getBass()
+                .coerceIn(0, 1000)
 
-            // Apply Treble (boost last band)
-            val trebleValue = pref.getTreble()
+            bassBoost?.setStrength(strength.toShort())
+
+            // Update Treble (last band boost)
             val lastBand = bandCount - 1
-
             if (lastBand >= 0) {
 
-                val trebleBoost = (trebleValue - 500) / 2
-                val currentLevel =
+                val treble = pref.getTreble()
+                val boost = (treble - 500) / 2
+
+                val current =
                     equalizer?.getBandLevel(lastBand.toShort()) ?: 0
 
-                val boosted = currentLevel + trebleBoost
+                val updated = current + boost
 
-                val safeTreble = boosted
-                    .coerceIn(min.toInt(), max.toInt())
+                val safeTreble =
+                    updated.coerceIn(min.toInt(), max.toInt())
 
                 equalizer?.setBandLevel(
                     lastBand.toShort(),
