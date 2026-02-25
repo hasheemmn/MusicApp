@@ -1,16 +1,18 @@
 package com.oges.myapplication.vm
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.oges.myapplication.localstorage.SharedPreference
+import com.oges.myapplication.service.MusicService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel
 class EqualizerVM @Inject constructor(
-    @ApplicationContext context: Context
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val pref = SharedPreference(context)
@@ -102,26 +104,25 @@ class EqualizerVM @Inject constructor(
         bandLevels[4] = b4.toShort()
     }
 
-    /* ---------------- SAVE ---------------- */
+    /* ---------------- SAVE + APPLY ---------------- */
 
-    fun saveToPref() {
+    fun applyChanges() {
 
         Log.d(TAG, "Saving Equalizer Settings")
 
-        Log.d(TAG, "Preset: $currentPreset")
         pref.setPreset(currentPreset)
-
-        Log.d(TAG, "Bass Level: $bassLevel")
         pref.setBass(bassLevel)
-
-        Log.d(TAG, "Treble Level: $trebleLevel")
         pref.setTreble(trebleLevel)
-
 
         for (i in 0 until 5) {
             pref.setBandLevel(i, bandLevels[i].toInt())
-            Log.d(TAG, "Band $i = ${bandLevels[i]}")
         }
+
+        // 🔥 Notify Service to refresh EQ
+        val intent = Intent(context, MusicService::class.java).apply {
+            action = MusicService.ACTION_REFRESH_EQ
+        }
+        context.startService(intent)
     }
 
     /* ---------------- RESTORE ---------------- */

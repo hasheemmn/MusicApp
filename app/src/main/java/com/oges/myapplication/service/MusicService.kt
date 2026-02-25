@@ -162,15 +162,11 @@ class MusicService : Service() {
 
             val sessionId = player.audioSessionId
 
-            // 🔥 If audio session not ready, retry once
             if (sessionId == 0) {
-                handler.postDelayed({
-                    applyEqualizer()
-                }, 300)
+                handler.postDelayed({ applyEqualizer() }, 300)
                 return
             }
 
-            // If EQ disabled → remove effects
             if (!pref.isEqEnabled()) {
                 equalizer?.release()
                 bassBoost?.release()
@@ -187,17 +183,18 @@ class MusicService : Service() {
                 enabled = true
             }
 
-            val bandCount = equalizer?.numberOfBands ?: 0
+            val bandCount = equalizer?.numberOfBands ?: return
             val range = equalizer?.bandLevelRange ?: return
             val min = range[0]
             val max = range[1]
 
+            // Apply saved bands
             for (i in 0 until bandCount) {
 
                 val savedLevel = pref.getBandLevel(i)
 
-                val safeLevel =
-                    savedLevel.coerceIn(min.toInt(), max.toInt())
+                val safeLevel = savedLevel
+                    .coerceIn(min.toInt(), max.toInt())
 
                 equalizer?.setBandLevel(
                     i.toShort(),
@@ -205,11 +202,33 @@ class MusicService : Service() {
                 )
             }
 
+            // Apply Bass Boost
             bassBoost = BassBoost(0, sessionId).apply {
                 enabled = true
-                val strength =
-                    pref.getBass().coerceIn(0, 1000)
+                val strength = pref.getBass()
+                    .coerceIn(0, 1000)
                 setStrength(strength.toShort())
+            }
+
+            // Apply Treble (boost last band)
+            val trebleValue = pref.getTreble()
+            val lastBand = bandCount - 1
+
+            if (lastBand >= 0) {
+
+                val trebleBoost = (trebleValue - 500) / 2
+                val currentLevel =
+                    equalizer?.getBandLevel(lastBand.toShort()) ?: 0
+
+                val boosted = currentLevel + trebleBoost
+
+                val safeTreble = boosted
+                    .coerceIn(min.toInt(), max.toInt())
+
+                equalizer?.setBandLevel(
+                    lastBand.toShort(),
+                    safeTreble.toShort()
+                )
             }
 
         } catch (e: Exception) {
