@@ -1,1 +1,77 @@
+# 🎵 Modern Music Player App (MVVM + ExoPlayer + Equalizer)
+
+A fully functional Android Music Player built using **Kotlin**, **MVVM Architecture**, and **ExoPlayer**.  
+The app supports background playback, custom notification controls, waveform seekbar, and a dynamic Equalizer system.
+
+---
+
+
+## 🚀 Features
+
+- 🎧 Background music playback (Foreground Service)
+- 🔔 Custom Notification with Play/Pause
+- 🎚️ 5-Band Equalizer (Real AudioFX)
+- 🎵 Bass Boost Support
+- 🎼 Presets (Flat, Rock, Pop, Jazz, Classical, Vocal)
+- 🌊 Custom Waveform SeekBar
+- 🔄 Real-time playback updates using StateFlow
+- 📦 SharedPreferences based EQ persistence
+- 🧠 MVVM Architecture with clean separation
+- ⚡ Smooth UI updates using Kotlin Coroutines
+
+---
+
+## 🏗️ Architecture
+
+The app follows **MVVM (Model-View-ViewModel)** architecture.
+
+### 📂 Structure
+
+- `ui/fragment` → UI Layer (Fragments)
+- `vm/` → ViewModel Layer
+- `service/` → Foreground MusicService
+- `localstorage/` → SharedPreferences handler
+- `utils/` → Custom WaveformView
+- `models/` → Data models
+
+---
+
+## 🛠️ Technologies Used
+
+| Technology | Purpose |
+|------------|----------|
+| Kotlin | Primary programming language |
+| MVVM | Clean architecture |
+| ExoPlayer | Audio playback engine |
+| Foreground Service | Background playback |
+| StateFlow | Real-time playback state updates |
+| AudioFX (Equalizer + BassBoost) | Sound enhancement |
+| Glide | Image loading |
+| Material 3 | UI Components |
+| SharedPreferences | Persist Equalizer settings |
+
+---
+
+## 🎧 Audio System
+
+- ExoPlayer used for streaming and local playback.
+- Equalizer applied using `audioSessionId`.
+- User EQ settings stored and reapplied dynamically.
+- Supports:
+  - Band Level Control
+  - Bass Boost
+  - Preset Switching
+  - Live EQ refresh without restarting playback
+
+---
+
+
+## 📱 Device Compatibility
+
+- Tested on:
+  - Android 10+
+  - Android 13
+  - Android 14 (Samsung optimized)
+- Handles background restrictions properly
+
 
