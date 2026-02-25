@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.oges.myapplication.R
 import com.oges.myapplication.databinding.FragmentHomeBinding
@@ -92,6 +93,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
         binding.IdPreviousBtn.setOnClickListener {
             viewModel.onPrevious()
+        }
+        binding.icEquilizer.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_equalizerFragment)
         }
     }
 
