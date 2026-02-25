@@ -1,106 +1,102 @@
-package com.codmeric.musicplayer.ui
+package com.oges.myapplication.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.codmeric.musicplayer.databinding.FragmentEqualizerBinding
-import com.codmeric.musicplayer.viewmodel.SharedMediaViewModel
-import com.codmeric.musicplayer.MusicPlayerApp
-import com.codmeric.musicplayer.viewmodel.SharedMediaViewModelFactory
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.oges.myapplication.databinding.FragmentEqualiserBinding
+import com.oges.myapplication.vm.EqualizerVM
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EqualizerFragment : Fragment() {
 
-    private var _binding: FragmentEqualizerBinding? = null
+    private var _binding: FragmentEqualiserBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: SharedMediaViewModel by activityViewModels {
-        val app = requireActivity().application as MusicPlayerApp
-        SharedMediaViewModelFactory(
-            app.repository,
-            app.mediaManager,
-            app.equalizerManager,
-            requireContext().applicationContext
-        )
-    }
+    private val viewModel: EqualizerVM by viewModels()
 
-    // SeekBar range is 0..30; center (15) = 0 dB, range = -15 to +15
     private val seekBarCenter = 15
-    // Equalizer level is in mil-libels (mB). 1500 mB = 15 dB
     private val mbPerStep = 100
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentEqualizerBinding.inflate(inflater, container, false)
+        _binding = FragmentEqualiserBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupEqSliders()
         setupKnobs()
         setupPresetButtons()
-        setupMasterSwitch()
+        setupSaveButton()
+        restoreUI()
     }
 
-    private fun setupMasterSwitch() {
-        binding.switchEqualizer.isChecked = viewModel.isEqualizerEnabled()
-        updateUiState(binding.switchEqualizer.isChecked)
-
-        binding.switchEqualizer.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setEqualizerEnabled(isChecked)
-            updateUiState(isChecked)
-        }
-    }
-
-    private fun updateUiState(enabled: Boolean) {
-        //val root = binding.root as ViewGroup
-    }
+    /* ---------------- SLIDERS ---------------- */
 
     private fun setupEqSliders() {
+
         val seekBars = listOf(
-            binding.sliderEq1, binding.sliderEq2, binding.sliderEq3,
-            binding.sliderEq4, binding.sliderEq5
+            binding.band60,
+            binding.band230,
+            binding.band1k,
+            binding.band3k,
+            binding.band10k
         )
 
         seekBars.forEachIndexed { index, seekBar ->
-            val band = index.toShort()
-            // Convert mil-libel level to center-relative seekbar progress
-            val levelMb = viewModel.getBandLevel(band).toInt()
-            seekBar.progress = (levelMb / mbPerStep) + seekBarCenter
 
-            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
+            seekBar.setOnSeekBarChangeListener(object :
+                SeekBar.OnSeekBarChangeListener {
+
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
                     if (fromUser) {
-                        val newLevel = ((progress - seekBarCenter) * mbPerStep).toShort()
-                        viewModel.setBandLevel(band, newLevel)
+                        val level =
+                            ((progress - seekBarCenter) * mbPerStep).toShort()
+
+                        viewModel.setBandLevel(index.toShort(), level)
                     }
                 }
-                override fun onStartTrackingTouch(sb: SeekBar?) {}
-                override fun onStopTrackingTouch(sb: SeekBar?) {}
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
             })
         }
     }
 
-    private fun setupKnobs() {
-        binding.knobBass.progressValue = viewModel.getBassLevel()
-        binding.knobTreble.progressValue = viewModel.getTrebleLevel()
+    /* ---------------- KNOBS ---------------- */
 
-        binding.knobBass.setOnProgressListener { progress ->
-            viewModel.setBassLevel(progress)
+    private fun setupKnobs() {
+
+        binding.knobLow.setOnProgressListener {
+            viewModel.setBassLevel(it)
         }
-        binding.knobTreble.setOnProgressListener { progress ->
-            viewModel.setTrebleLevel(progress)
+
+        binding.knobHigh.setOnProgressListener {
+            viewModel.setTrebleLevel(it)
         }
     }
 
+    /* ---------------- PRESETS ---------------- */
+
     private fun setupPresetButtons() {
-        val presetButtons = mapOf(
+
+        val presets = mapOf(
             binding.chipFlat to "Flat",
             binding.chipRock to "Rock",
             binding.chipPop to "Pop",
@@ -109,23 +105,60 @@ class EqualizerFragment : Fragment() {
             binding.chipVocal to "Vocal"
         )
 
-        presetButtons.forEach { (button, preset) ->
+        presets.forEach { (button, presetName) ->
             button.setOnClickListener {
-                viewModel.setPreset(preset)
-                updateSeekBarsFromPreset()
+                viewModel.setPreset(presetName)
+                updateUIFromVM()
             }
         }
     }
 
-    private fun updateSeekBarsFromPreset() {
+    private fun updateUIFromVM() {
+
         val seekBars = listOf(
-            binding.sliderEq1, binding.sliderEq2, binding.sliderEq3,
-            binding.sliderEq4, binding.sliderEq5
+            binding.band60,
+            binding.band230,
+            binding.band1k,
+            binding.band3k,
+            binding.band10k
         )
+
         seekBars.forEachIndexed { index, seekBar ->
-            val levelMb = viewModel.getBandLevel(index.toShort()).toInt()
-            seekBar.progress = (levelMb / mbPerStep) + seekBarCenter
+            val level =
+                viewModel.getBandLevel(index.toShort()).toInt()
+
+            seekBar.progress =
+                (level / mbPerStep) + seekBarCenter
         }
+
+        binding.knobLow.progressValue =
+            viewModel.getBassLevel()
+
+        binding.knobHigh.progressValue =
+            viewModel.getTrebleLevel()
+    }
+
+    /* ---------------- SAVE ---------------- */
+
+    private fun setupSaveButton() {
+
+        binding.cvSave.setOnClickListener {
+
+            viewModel.saveToPref()
+
+            Toast.makeText(
+                requireContext(),
+                "Equalizer settings saved",
+                Toast.LENGTH_SHORT
+            ).show()
+            findNavController().popBackStack()
+        }
+    }
+
+    /* ---------------- RESTORE ---------------- */
+
+    private fun restoreUI() {
+        updateUIFromVM()
     }
 
     override fun onDestroyView() {

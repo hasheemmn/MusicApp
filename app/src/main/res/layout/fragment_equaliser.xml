@@ -272,23 +272,175 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <HorizontalScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:scrollbars="none">
+                android:layout_marginTop="22dp"
+                android:orientation="vertical">
+
+                <!-- ================= ROW 1 ================= -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <Button android:id="@+id/chipFlat" style="@style/Widget.Material3.Button.ElevatedButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Flat" android:layout_marginEnd="12dp"/>
-                    <Button android:id="@+id/chipRock" style="@style/Widget.Material3.Button.ElevatedButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Rock" android:layout_marginEnd="12dp"/>
-                    <Button android:id="@+id/chipPop" style="@style/Widget.Material3.Button.ElevatedButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pop" android:layout_marginEnd="12dp"/>
-                    <Button android:id="@+id/chipJazz" style="@style/Widget.Material3.Button.ElevatedButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Jazz" android:layout_marginEnd="12dp"/>
-                    <Button android:id="@+id/chipClassical" style="@style/Widget.Material3.Button.ElevatedButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Classical" android:layout_marginEnd="12dp"/>
-                    <Button android:id="@+id/chipVocal" style="@style/Widget.Material3.Button.ElevatedButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vocal"/>
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginBottom="12dp">
+
+                    <!-- FLAT -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/chipFlat"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                         app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="13sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Flat"
+                            android:textStyle="bold"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- ROCK -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/chipRock"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                          app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="13sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Rock"
+                            android:textStyle="bold"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- POP -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/chipPop"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="Pop"
+                            android:textColor="@color/black"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textStyle="bold"/>
+                    </androidx.cardview.widget.CardView>
+
                 </LinearLayout>
-            </HorizontalScrollView>
+
+
+                <!-- ================= ROW 2 ================= -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <!-- JAZZ -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/chipJazz"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                     app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="13sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Jazz"
+                            android:textStyle="bold"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- CLASSICAL -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/chipClassical"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="13sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Classical"
+                            android:textStyle="bold"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- VOCAL -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/chipVocal"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="13sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Vocal"
+                            android:textStyle="bold"/>
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

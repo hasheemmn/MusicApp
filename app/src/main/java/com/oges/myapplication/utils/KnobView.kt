@@ -9,14 +9,13 @@ import android.view.MotionEvent
 import android.view.View
 import kotlin.math.atan2
 import kotlin.math.min
-import kotlin.math.PI
 
 class KnobView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    private var angle = 0f
+    private var angle = -135f
     private var value = 0
 
     private val maxValue = 1000
@@ -34,9 +33,24 @@ class KnobView @JvmOverloads constructor(
         strokeWidth = 8f
     }
 
-    fun setOnValueChangeListener(callback: (Int) -> Unit) {
+    /* ---------------- PUBLIC API ---------------- */
+
+    var progressValue: Int
+        get() = value
+        set(newValue) {
+            value = newValue.coerceIn(0, maxValue)
+
+            val normalized = value.toFloat() / maxValue
+            angle = minAngle + normalized * (maxAngle - minAngle)
+
+            invalidate()
+        }
+
+    fun setOnProgressListener(callback: (Int) -> Unit) {
         listener = callback
     }
+
+    /* ---------------- DRAW ---------------- */
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -44,7 +58,7 @@ class KnobView @JvmOverloads constructor(
         val size = min(width, height)
         val radius = size / 2f
 
-        // Draw knob circle
+        // Draw knob
         canvas.drawCircle(
             width / 2f,
             height / 2f,
@@ -52,7 +66,7 @@ class KnobView @JvmOverloads constructor(
             knobPaint
         )
 
-        // Draw indicator line
+        // Draw indicator
         val indicatorLength = radius * 0.7f
         val rad = Math.toRadians(angle.toDouble())
 
@@ -68,6 +82,8 @@ class KnobView @JvmOverloads constructor(
         )
     }
 
+    /* ---------------- TOUCH ---------------- */
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
 
         val centerX = width / 2f
@@ -76,9 +92,11 @@ class KnobView @JvmOverloads constructor(
         val dx = event.x - centerX
         val dy = event.y - centerY
 
-        val touchAngle = Math.toDegrees(atan2(dy, dx).toDouble()).toFloat()
+        val touchAngle =
+            Math.toDegrees(atan2(dy, dx).toDouble()).toFloat()
 
         if (touchAngle in minAngle..maxAngle) {
+
             angle = touchAngle
 
             val normalized =
